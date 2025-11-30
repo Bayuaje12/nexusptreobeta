@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXusptreo Beta - Next Gen Hosting</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    /* --- 1. CSS GAYA TAMPILAN MODERN (CYBER THEME) --- */
+    :root {
+        --bg-dark: #050505;
+        --primary: #00f2ff; /* Cyan Neon */
+        --secondary: #7000ff; /* Deep Purple */
+        --accent: #ff0055; /* Hot Pink */
+        --glass: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --text-main: #ffffff;
+        --text-muted: #8892b0;
+        --font-main: 'Outfit', sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: var(--font-main);
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    /* Background Animation */
+    .bg-grid {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px; z-index: -2;
+        mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+    }
+    .bg-glow {
+        position: fixed; top: 50%; left: 50%; width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(112, 0, 255, 0.2) 0%, transparent 70%);
+        transform: translate(-50%, -50%); z-index: -1;
+        animation: pulseGlow 8s infinite alternate;
+    }
+    @keyframes pulseGlow {
+        0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
+    }
+
+    /* Container Utama */
+    .main-container { width: 100%; max-width: 480px; min-height: 100vh; padding: 20px; position: relative; }
+
+    /* Header */
+    .nexus-header { display: flex; justify-content: center; margin-bottom: 20px; }
+    .brand-badge {
+        background: linear-gradient(90deg, var(--secondary), var(--primary));
+        padding: 5px 15px; border-radius: 20px; font-size: 0.75rem;
+        font-weight: 800; letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+    }
+
+    /* Komponen Umum */
+    .hidden { display: none !important; }
+    
+    .glass-panel {
+        background: var(--glass); border: 1px solid var(--glass-border);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px; padding: 20px; margin-bottom: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--secondary), var(--primary));
+        color: #fff; border: none; padding: 14px 24px; border-radius: 12px;
+        font-family: var(--font-main); font-weight: 700; font-size: 1rem;
+        cursor: pointer; transition: 0.3s; width: 100%; text-transform: uppercase;
+        position: relative; overflow: hidden;
+    }
+    .btn-primary:hover { box-shadow: 0 0 20px rgba(0, 242, 255, 0.4); transform: translateY(-2px); }
+    
+    .btn-secondary {
+        background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 600;
+        margin-top: 10px; transition: 0.3s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.2); border-color: var(--primary); }
+    
+    .btn-icon {
+        background: var(--glass); border: 1px solid var(--glass-border); color: #fff;
+        width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    }
+
+    /* Halaman Welcome & Logo */
+    #welcomeScreen { text-align: center; padding-top: 40px; animation: fadeIn 0.8s ease-out; }
+    .logo-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto 30px; }
+    
+    /* Agar foto logo tidak raksasa */
+    .main-logo { 
+        width: 100%; height: 100%; border-radius: 50%; 
+        object-fit: cover; position: relative; z-index: 2; 
+        border: 3px solid rgba(255, 255, 255, 0.1); 
+    }
+    
+    .logo-glow {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 140px; height: 140px; border-radius: 50%;
+        background: conic-gradient(from 0deg, transparent, var(--primary), var(--secondary), transparent);
+        animation: spin 4s linear infinite; z-index: 1; filter: blur(10px);
+    }
+    .nexus-title { font-size: 2.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 15px; }
+    .nexus-title .highlight { 
+        background: linear-gradient(to right, var(--primary), var(--secondary)); 
+        -webkit-background-clip: text; color: transparent; 
+    }
+    .nexus-desc { color: var(--text-muted); margin-bottom: 40px; font-size: 0.95rem; }
+
+    /* Kartu Produk */
+    .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding-bottom: 120px; }
+    
+    .product-card {
+        background: rgba(20, 20, 30, 0.6); border: 1px solid var(--glass-border);
+        border-radius: 16px; padding: 15px; cursor: pointer; transition: 0.3s; position: relative;
+        overflow: hidden;
+    }
+    
+    .product-card.popular { 
+        grid-column: span 2; 
+        background: linear-gradient(135deg, rgba(112,0,255,0.15), rgba(0,0,0,0.5)); 
+        border-color: var(--secondary);
+    }
+    .product-card.popular::before {
+        content: 'BEST SELLER'; position: absolute; top: 0; left: 0;
+        background: var(--secondary); font-size: 0.6rem; padding: 3px 8px;
+        border-bottom-right-radius: 8px; font-weight: bold;
+    }
+
+    .product-card:hover, .product-card.selected { 
+        transform: translateY(-5px); border-color: var(--primary); 
+        box-shadow: 0 10px 30px rgba(0, 242, 255, 0.15); 
+    }
+    .product-card.selected::after {
+        content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+        position: absolute; top: 10px; right: 10px; color: var(--primary);
+    }
+
+    .plan-name { display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-muted); margin-bottom: 2px;}
+    .plan-price { display: block; font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 10px; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+    .spec-item { font-size: 0.75rem; color: #ccc; margin-bottom: 4px; display: flex; align-items: center; }
+    .spec-item i { color: var(--primary); margin-right: 6px; font-size: 0.7rem; width: 12px;}
+    
+    /* Tombol Floating */
+    .floating-action { 
+        position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+        width: 90%; max-width: 440px; z-index: 10; 
+    }
+
+    /* Form Pembayaran */
+    .section-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+    input { 
+        width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+        padding: 15px; border-radius: 10px; color: #fff; margin-bottom: 15px; outline: none;
+    }
+    input:focus { border-color: var(--primary); }
+    
+    .payment-method-box {
+        background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent);
+        border: 1px solid var(--primary); padding: 15px; border-radius: 10px;
+        display: flex; align-items: center; font-weight: 600; margin-bottom: 20px;
+    }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+    .price-text { color: var(--primary); font-weight: 800; font-size: 1.1rem; }
+
+    /* --- WHATSAPP WIDGET --- */
+    .wa-widget-container {
+        position: fixed; bottom: 20px; left: 20px; z-index: 9999;
+        display: flex; flex-direction: column; align-items: flex-end;
+        animation: slideInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.3s ease;
+    }
+    .wa-close-btn {
+        position: absolute; top: -5px; right: -5px; width: 24px; height: 24px;
+        background: var(--accent); color: white; border: none; border-radius: 50%;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        font-size: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); z-index: 10001;
+        transition: transform 0.2s;
+    }
+    .wa-close-btn:hover { transform: scale(1.2); }
+    .wa-link { position: relative; display: block; width: 60px; height: 60px; text-decoration: none; }
+    .wa-logo {
+        width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+        border: 2px solid var(--primary); position: relative; z-index: 2;
+        transition: transform 0.3s ease; background: #000;
+    }
+    .wa-glow {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        width: 100%; height: 100%; border-radius: 50%; background: rgba(0, 242, 255, 0.4);
+        z-index: 1; animation: pulseGlowWA 2s infinite;
+    }
+    .wa-link:hover .wa-logo { transform: scale(1.1) rotate(5deg); box-shadow: 0 0 20px rgba(0, 242, 255, 0.8); }
+    .wa-hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
+
+    /* --- KUSTOMISASI SWEETALERT2 (NEXUS THEME) --- */
+    /* Membuat SweetAlert tampil dark mode dengan border neon */
+    div:where(.swal2-container) div:where(.swal2-popup) {
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid #00f2ff;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+    div:where(.swal2-container) h2:where(.swal2-title) {
+        color: #fff !important; font-family: 'Outfit', sans-serif; font-weight: 800;
+        text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+    }
+    div:where(.swal2-container) div:where(.swal2-html-container) {
+        color: #8892b0 !important; font-family: 'Poppins', sans-serif;
+    }
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm {
+        background: linear-gradient(90deg, #7000ff, #00f2ff) !important;
+        box-shadow: 0 4px 15px rgba(0, 242, 255, 0.4) !important;
+        border-radius: 12px !important; font-weight: bold; text-transform: uppercase;
+        font-family: 'Outfit', sans-serif;
+    }
+    div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
+        background: rgba(255, 255, 255, 0.1) !important; color: #fff !important;
+        border-radius: 12px !important;
+    }
+    /* Ikon */
+    div:where(.swal2-icon).swal2-error { border-color: #ff0055 !important; color: #ff0055 !important; }
+    div:where(.swal2-icon).swal2-success { border-color: #00f2ff !important; color: #00f2ff !important; }
+    div:where(.swal2-icon).swal2-warning { border-color: #ffff00 !important; color: #ffff00 !important; }
+
+    /* Animasi Dasar */
+    @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlowWA { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+
+  </style>
+</head>
+<body>
+  
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="main-container">
+    
+    <header class="nexus-header">
+      <div class="brand-badge">BETA v1.0</div>
+    </header>
+
+    <section id="welcomeScreen" class="active">
+      <div class="hero-content">
+        <div class="logo-wrapper">
+          <img src="https://files.catbox.moe/yxmmdl.png" alt="NEXusptreo Logo" class="main-logo">
+          <div class="logo-glow"></div>
+        </div>
+        
+        <h1 class="nexus-title">NEXusptreo <span class="highlight">Beta</span></h1>
+        <p class="nexus-desc">
+          Layanan Hosting Pterodactyl.<br>
+          Cepat, Murah, dan Berkualitas.
+        </p>
+
+        <button class="btn-primary" onclick="showProductSection()">
+           <i class="fa-solid fa-rocket"></i> LIHAT PRODUK
+        </button>
+      </div>
+    </section>
+
+    <section id="productSection" class="hidden">
+      <div class="section-header">
+        <button class="btn-icon" onclick="backToWelcome()"><i class="fa-solid fa-arrow-left"></i></button>
+        <h2>Pilih Kapasitas</h2>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-card" onclick="selectProduct(this, 'basic', 1000)">
+          <span class="plan-name">Level 1</span>
+          <span class="plan-price">Rp 1.000</span>
+          <div class="spec-item"><i class="fa-solid fa-memory"></i> 1000 MB RAM</div>
+          <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 1000 MB Disk</div>
+          <div class="spec-item"><i class="fa-solid fa-microchip"></i> 30% CPU</div>
+        </div>
+        <div class="product-card" onclick="selectProduct(this, 'premium', 2000)">
+          <span class="plan-name">Level 2</span>
+          <span class="plan-price">Rp 2.000</span>
+          <div class="spec-item"><i class="fa-solid fa-memory"></i> 2048 MB RAM</div>
+          <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 2048 MB Disk</div>
+          <div class="spec-item"><i class="fa-solid fa-microchip"></i> 50% CPU</div>
+        </div>
+        <div class="product-card popular" onclick="selectProduct(this, 'business', 3000)">
+          <span class="plan-name">Level 3 (Popular)</span>
+          <span class="plan-price">Rp 3.000</span>
+          <div class="spec-item"><i class="fa-solid fa-memory"></i> 3000 MB RAM</div>
+          <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 3000 MB Disk</div>
+          <div class="spec-item"><i class="fa-solid fa-microchip"></i> 60% CPU</div>
+        </div>
+        <div class="product-card" onclick="selectProduct(this, 'business', 4000)">
+            <span class="plan-name">Level 4</span>
+            <span class="plan-price">Rp 4.000</span>
+            <div class="spec-item"><i class="fa-solid fa-memory"></i> 4000 MB RAM</div>
+            <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 4000 MB Disk</div>
+            <div class="spec-item"><i class="fa-solid fa-microchip"></i> 70% CPU</div>
+          </div>
+          <div class="product-card" onclick="selectProduct(this, 'pakethost', 5000)">
+            <span class="plan-name">Level 5</span>
+            <span class="plan-price">Rp 5.000</span>
+            <div class="spec-item"><i class="fa-solid fa-memory"></i> 5000 MB RAM</div>
+            <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 5000 MB Disk</div>
+            <div class="spec-item"><i class="fa-solid fa-microchip"></i> 80% CPU</div>
+          </div>
+          <div class="product-card" onclick="selectProduct(this, 'pakethost1', 6000)">
+            <span class="plan-name">Level 6</span>
+            <span class="plan-price">Rp 6.000</span>
+            <div class="spec-item"><i class="fa-solid fa-memory"></i> 6000 MB RAM</div>
+            <div class="spec-item"><i class="fa-solid fa-hard-drive"></i> 6000 MB Disk</div>
+            <div class="spec-item"><i class="fa-solid fa-microchip"></i> 100% CPU</div>
+          </div>
+          <div class="product-card popular" onclick="selectProduct(this, 'pakethost5', 10000)">
+            <span class="plan-name">UNLIMITED</span>
+            <span class="plan-price">Rp 10.000</span>
+            <div class="spec-item"><i class="fa-solid fa-infinity"></i> Unlimited RAM</div>
+            <div class="spec-item"><i class="fa-solid fa-infinity"></i> Unlimited Disk</div>
+            <div class="spec-item"><i class="fa-solid fa-infinity"></i> Unlimited CPU</div>
+          </div>
+      </div>
+
+      <div class="floating-action">
+        <button id="continueToPayment" class="btn-primary" onclick="showPaymentForm()" style="display:none;">
+          LANJUT PEMBAYARAN <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <section id="paymentForm" class="hidden">
+      <div class="section-header">
+        <button class="btn-icon" onclick="backToProductSection()"><i class="fa-solid fa-arrow-left"></i></button>
+        <h2>Checkout</h2>
+      </div>
+
+      <div class="glass-panel">
+        <div class="summary-row">
+          <span>Paket</span>
+          <span id="summaryPackage" class="highlight">--</span>
+        </div>
+        <div class="summary-row">
+          <span>Total</span>
+          <span class="price-text">Rp <span id="summaryPrice">0</span></span>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <label style="font-size: 0.9rem; color: #888;">Email Penerima Akun</label>
+            <input type="email" id="email" placeholder="contoh@email.com" required>
+        </div>
+
+        <div class="payment-method-box">
+          <i class="fa-solid fa-qrcode" style="margin-right:10px; color:cyan;"></i> QRIS (All E-Wallet)
+          <i class="fa-solid fa-check-circle" style="margin-left:auto; color:cyan;"></i>
+        </div>
+
+        <button id="startButton" class="btn-primary" onclick="startPayment()">
+          KONFIRMASI BAYAR
+        </button>
+        
+        <div id="info" class="hidden" style="margin-top: 20px; text-align: center;">
+            <div style="background: white; padding: 10px; border-radius: 10px; display: inline-block;">
+                <img id="qrImage" src="" alt="QR Code" style="width: 200px; height: 200px;">
+            </div>
+            <p style="margin: 10px 0; font-family: monospace;">ID: <span id="idPembayaran">...</span></p>
+            <p style="color: #00f2ff; font-weight: bold; font-size: 1.2rem;">Rp <span id="total">...</span></p>
+            <p id="status" class="hidden" style="margin: 10px 0; font-weight: bold; color: yellow;">Menunggu Pembayaran...</p>
+            
+            <button class="btn-secondary" onclick="checkStatusNow()">Cek Status Manual</button>
+            <button class="btn-secondary" style="background: rgba(255,0,0,0.2); border-color: rgba(255,0,0,0.3);" onclick="window.location.reload()">Batalkan</button>
+        </div>
+        
+        <div id="loading" class="hidden" style="text-align:center; margin-top:20px;">
+            <i class="fa-solid fa-circle-notch fa-spin"></i> Membuat QRIS...
+        </div>
+      </div>
+    </section>
+    
+    <section id="successMessage" class="hidden" style="text-align: center; padding-top: 50px;">
+        <i class="fa-solid fa-circle-check" style="font-size: 4rem; color: #00f2ff; margin-bottom: 20px;"></i>
+        <h2>Berhasil!</h2>
+        <p>Akun Pterodactyl Anda aktif.</p>
+        
+        <div class="glass-panel" style="margin-top: 20px; text-align: left;">
+            <p><strong>Username:</strong> <span id="accountUsername">...</span> <i class="fa-regular fa-copy" onclick="copyText('accountUsername')" style="cursor:pointer; float:right;"></i></p>
+            <p><strong>Password:</strong> <span id="accountPassword">...</span> <i class="fa-regular fa-copy" onclick="copyText('accountPassword')" style="cursor:pointer; float:right;"></i></p>
+            <p><strong>URL:</strong> <span id="panelUrl">...</span></p>
+        </div>
+        <button class="btn-secondary" onclick="window.location.reload()">Kembali ke Menu</button>
+    </section>
+
+  </div>
+
+  <div id="wa-widget" class="wa-widget-container">
+    <button class="wa-close-btn" onclick="closeWaWidget()">
+        <i class="fa-solid fa-xmark"></i>
+    </button>
+    <a href="https://wa.me/6283170710652?text=Halo%20Admin,%20saya%20ingin%20lapor%20bug%20atau%20butuh%20bantuan" target="_blank" class="wa-link">
+        <img src="https://files.catbox.moe/yxmmdl.png" alt="Bantuan WhatsApp" class="wa-logo">
+        <div class="wa-glow"></div>
+    </a>
+  </div>
+  
+  <audio id="btnSound" src="iboyy.mp3" preload="auto"></audio>
+
+  <script>
+    // --- HELPER NOTIFIKASI MODERN (SWEETALERT) --- //
+    
+    // 1. Popup Alert (Pengganti Alert Error/Warning)
+    function showNexusAlert(title, text, icon = 'info') {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon, 
+            confirmButtonText: 'OKE SIAP',
+            buttonsStyling: true
+        });
+    }
+
+    // 2. Toast Notification (Untuk Salin Teks)
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#0f172a',
+        color: '#fff',
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    function showToast(title, icon = 'success') {
+        Toast.fire({
+            icon: icon,
+            title: title
+        });
+    }
+
+    // Fungsi Salin Teks (Baru)
+    function copyText(elementId) {
+        const text = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Teks berhasil disalin!');
+        });
+    }
+
+    // --- LOGIC UTAMA --- //
+    
+    const settings = {
+        apiSimpel: 'new2025', 
+        domain: 'https://elisrhma.wildandev.tech',
+        MERCHANT_ID: 'OK1960552',
+        KEYORKUT: '513251117364410601960552OKCT170A13AFB2B1060347DDC646A937C63C',
+        QR_CODE_URL: '00020101021126570011ID.DANA.WWW011893600915395260528502099526052850303UMI51440014ID.CO.QRIS.WWW0215ID10254188349540303UMI5204549953033605802ID5911Bayzu Store6014Kab. Indramayu61054528463040E68',
+    };
+    
+    let selectedProduct = null;
+    let selectedPrice = 0;
+    let polling = null;
+
+    function switchView(viewId) {
+        ['welcomeScreen', 'productSection', 'paymentForm', 'successMessage'].forEach(id => {
+            const el = document.getElementById(id);
+            if(id === viewId) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+    }
+    
+    function showProductSection() { switchView('productSection'); }
+    function backToWelcome() { switchView('welcomeScreen'); }
+    function backToProductSection() { switchView('productSection'); }
+    
+    function selectProduct(element, product, price) {
+        document.querySelectorAll('.product-card').forEach(el => el.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedProduct = product;
+        selectedPrice = price;
+        document.getElementById('continueToPayment').style.display = 'block';
+    }
+    
+    // --- FUNGSI INI TELAH DI-UPDATE UNTUK SUARA ---
+    function showPaymentForm() {
+        // Play Sound Effect
+        const audio = document.getElementById('btnSound');
+        if (audio) {
+            audio.currentTime = 0;
+            audio.volume = 0.5;
+            audio.play().catch(e => console.log("Audio play error:", e));
+        }
+
+        if(!selectedProduct) {
+            showNexusAlert('Pilih Paket', 'Silakan pilih paket hosting terlebih dahulu.', 'warning');
+            return;
+        }
+        document.getElementById('summaryPackage').innerText = selectedProduct.toUpperCase();
+        document.getElementById('summaryPrice').innerText = selectedPrice.toLocaleString('id-ID');
+        switchView('paymentForm');
+    }
+
+    function closeWaWidget() {
+        document.getElementById('wa-widget').classList.add('wa-hidden');
+    }
+    
+    async function startPayment() {
+        const email = document.getElementById('email').value;
+        if(!email) {
+            showNexusAlert('Email Wajib', 'Mohon masukkan email aktif untuk pengiriman akun.', 'warning');
+            return;
+        }
+        
+        document.getElementById('startButton').classList.add('hidden');
+        document.getElementById('loading').classList.remove('hidden');
+        
+        const randomFee = Math.floor(Math.random() * (500 - 100 + 1)) + 100;
+        const totalAmount = Number(selectedPrice) + randomFee;
+        const idPembayaran = Math.floor(Math.random() * 1000000000);
+
+        try {
+            const apiUrl = `https://simpelz.fahriofficial.my.id/api/orkut/createpayment?apikey=${settings.apiSimpel}&amount=${totalAmount}&codeqr=${settings.QR_CODE_URL}`;
+            
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            
+            if (data.status || data.result) {
+                const qrValidUrl = data.result.qrImageUrl;
+                const trxId = data.result.transactionId || idPembayaran;
+                const finalAmount = data.result.amount || totalAmount;
+
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('info').classList.remove('hidden');
+                document.getElementById('qrImage').src = qrValidUrl;
+                document.getElementById('idPembayaran').innerText = trxId;
+                document.getElementById('total').innerText = finalAmount.toLocaleString('id-ID');
+                document.getElementById('status').classList.remove('hidden');
+                
+                startPolling(finalAmount, trxId, email);
+
+            } else {
+                throw new Error("Gagal membuat QR");
+            }
+            
+        } catch (error) {
+            console.error(error);
+            showNexusAlert('Mode Offline', 'Gagal generate QR Dinamis. Menggunakan QR Statis. Harap transfer sesuai nominal unik.', 'info');
+            
+            const staticQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${settings.QR_CODE_URL}`;
+            
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('info').classList.remove('hidden');
+            document.getElementById('qrImage').src = staticQrUrl;
+            document.getElementById('idPembayaran').innerText = idPembayaran;
+            document.getElementById('total').innerText = totalAmount.toLocaleString('id-ID');
+            document.getElementById('status').innerText = "Mohon Scan & Input Nominal Secara Manual";
+            
+            startPolling(totalAmount, idPembayaran, email);
+        }
+    }
+    
+    function startPolling(amount, trxId, email) {
+        if(polling) clearInterval(polling);
+        polling = setInterval(async () => {
+             checkStatus(amount, email, true);
+        }, 5000); 
+    }
+    
+    async function checkStatusNow() {
+        const amountText = document.getElementById('total').innerText.replace(/\./g,'');
+        const amount = parseInt(amountText);
+        const email = document.getElementById('email').value;
+        
+        // Animasi loading pada tombol manual
+        showToast('Mengecek status pembayaran...', 'info');
+        await checkStatus(amount, email, false);
+    }
+
+    // Logic Cek ke Server
+    async function checkStatus(amount, email, isAuto) {
+        try {
+            const res = await fetch(`https://simpelz.fahriofficial.my.id/api/orkut/cekstatus?apikey=${settings.apiSimpel}&merchant=${settings.MERCHANT_ID}&keyorkut=${settings.KEYORKUT}`);
+            const data = await res.json();
+            
+            if (data.amount && Math.abs(Number(data.amount) - Number(amount)) < 100) {
+                if(polling) clearInterval(polling);
+                document.getElementById('status').innerText = "LUNAS! Membuat akun...";
+                document.getElementById('status').style.color = "#00f2ff";
+                
+                if(!isAuto) {
+                    showNexusAlert('Pembayaran Diterima!', 'Pembayaran valid! Sedang memproses pembuatan akun...', 'success');
+                }
+                
+                createAccountAndFinish(email);
+            } else {
+                // Jika manual check dan belum masuk
+                if(!isAuto) {
+                    showNexusAlert('Belum Masuk', `Sistem belum menerima pembayaran sebesar Rp ${amount.toLocaleString('id-ID')}. Jika sudah transfer, mohon tunggu 1-2 menit.`, 'error');
+                }
+            }
+        } catch (e) {
+            console.log("Menunggu pembayaran...");
+        }
+    }
+    
+    async function createAccountAndFinish(email) {
+        const url = 'https://simpelz.fahriofficial.my.id/api/pterodactyl/create-user-and-server';
+        
+        let memory = 1024, diskSize = 1024, cpuCores = 30;
+        
+        if (selectedProduct === 'basic') { memory = 1024; diskSize = 1024; cpuCores = 30; }
+        else if (selectedProduct === 'premium') { memory = 2048; diskSize = 2048; cpuCores = 50; }
+        else if (selectedProduct === 'business') { 
+            if(selectedPrice == 3000) { memory = 3000; diskSize = 3000; cpuCores = 60; }
+            else { memory = 4000; diskSize = 4000; cpuCores = 70; }
+        }
+        else if (selectedProduct === 'pakethost') { memory = 5000; diskSize = 5000; cpuCores = 80; }
+        else if (selectedProduct === 'pakethost1') { memory = 6000; diskSize = 6000; cpuCores = 100; }
+        else if (selectedProduct === 'pakethost5') { memory = 0; diskSize = 0; cpuCores = 0; }
+
+        const username = email.split('@')[0].replace(/[^a-z0-9]/g, '');
+        const password = username + Math.floor(Math.random() * 1000);
+        
+        const params = new URLSearchParams({
+            domain: settings.domain,
+            apikey: 'ptla_KHCJGIkI5TR8Q48xtF0w1wdCu2bCCQgDSNXobCkiLGf',
+            email: email,
+            username: username,
+            first_name: username,
+            last_name: "User",
+            memory: memory,
+            disk: diskSize,
+            cpu: cpuCores,
+            locV2: 1,
+            password: password
+        });
+        
+        try {
+            const res = await fetch(`${url}?${params.toString()}`);
+            const data = await res.json();
+            
+            document.getElementById('accountUsername').innerText = username;
+            document.getElementById('accountPassword').innerText = password;
+            document.getElementById('panelUrl').innerText = settings.domain;
+            switchView('successMessage');
+            
+            showNexusAlert('Sukses!', 'Akun Pterodactyl Anda telah berhasil dibuat.', 'success');
+            
+        } catch(e) {
+             document.getElementById('accountUsername').innerText = username;
+             document.getElementById('accountPassword').innerText = password;
+             document.getElementById('panelUrl').innerText = settings.domain;
+             switchView('successMessage');
+             showNexusAlert('Info', 'Pembayaran diterima! Namun jika akun belum masuk email, silakan Screenshot halaman ini dan kirim ke Admin.', 'info');
+        }
+    }
+  </script>
+</body>
+</html>
